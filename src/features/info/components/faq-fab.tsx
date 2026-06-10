@@ -7,11 +7,11 @@ export function FaqFab() {
 
   return (
     <Button
-      onClick={() => navigate("/about")}
+      onClick={() => navigate("/product-wiki")}
       size="icon"
       className="fixed bottom-6 right-6 rounded-full shadow-lg hover:shadow-xl transition-shadow"
-      aria-label="About and FAQ"
-      title="About Ledger & FAQ"
+      aria-label="Product Wiki"
+      title="Ledger Product Wiki"
     >
       <HelpCircle className="size-5" />
     </Button>

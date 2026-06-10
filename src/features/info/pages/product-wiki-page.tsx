@@ -1,4 +1,4 @@
-export function AboutPage() {
+export function ProductWikiPage() {
   return (
     <div className="min-h-svh bg-background p-6">
       <div className="max-w-2xl mx-auto">
@@ -13,7 +13,7 @@ export function AboutPage() {
           <section>
             <div className="mb-4">
               <span className="font-mono text-[11px] tracking-[0.35em] uppercase text-muted-foreground">
-                — About —
+                — Product Wiki —
               </span>
             </div>
             <h1 className="text-4xl font-bold mb-2">Ledger</h1>

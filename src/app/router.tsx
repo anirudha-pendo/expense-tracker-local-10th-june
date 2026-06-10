@@ -10,7 +10,7 @@ import { InsightsPage } from "@/features/insights/pages/insights-page";
 import { SettingsPage } from "@/features/settings/pages/settings-page";
 import { ProtectedRoute } from "@/shared/components/protected-route";
 import { BotPage } from "@/features/bot/pages/bot-page";
-import { AboutPage } from "@/features/info/pages/about-page";
+import { ProductWikiPage } from "@/features/info/pages/product-wiki-page";
 import { FaqFab } from "@/features/info/components/faq-fab";
 
 function GuestGuard({ children }: { children: React.ReactNode }) {
@@ -34,11 +34,11 @@ function WorkspaceGuard({ children }: { children: React.ReactNode }) {
 
 function RouterContent() {
   const location = useLocation();
-  const isAboutPage = location.pathname === "/about";
+  const isProductWikiPage = location.pathname === "/product-wiki";
 
   return (
     <>
-      {!isAboutPage && <FaqFab />}
+      {!isProductWikiPage && <FaqFab />}
       <Routes>
         <Route
           path="/sign-in"
@@ -105,7 +105,7 @@ function RouterContent() {
           }
         />
         <Route path="/bot" element={<BotPage />} />
-        <Route path="/about" element={<AboutPage />} />
+        <Route path="/product-wiki" element={<ProductWikiPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
