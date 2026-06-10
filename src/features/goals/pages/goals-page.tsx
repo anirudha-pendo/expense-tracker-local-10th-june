@@ -35,6 +35,12 @@ export function GoalsPage() {
         deadline: values.deadline || undefined,
         color: values.color,
       });
+      pendo.track("goal_created", {
+        goalName: values.name,
+        targetAmount: values.targetAmount,
+        hasDeadline: Boolean(values.deadline),
+        color: values.color,
+      });
       setShowForm(false);
       toast.success("Goal created");
     } catch {
@@ -52,6 +58,12 @@ export function GoalsPage() {
         deadline: values.deadline || undefined,
         color: values.color,
       });
+      pendo.track("goal_edited", {
+        goalName: values.name,
+        targetAmount: values.targetAmount,
+        hasDeadline: Boolean(values.deadline),
+        color: values.color,
+      });
       setEditingGoal(null);
       toast.success("Goal updated");
     } catch {
@@ -67,6 +79,16 @@ export function GoalsPage() {
         date: values.date,
         note: values.note || undefined,
       });
+      const currentAmount = contributingGoal.contributions?.reduce((sum, c) => sum + c.amount, 0) ?? 0;
+      pendo.track("goal_contribution_added", {
+        goalId: contributingGoal.id,
+        contributionAmount: values.amount,
+        contributionDate: values.date,
+        hasNote: Boolean(values.note),
+        goalTargetAmount: contributingGoal.targetAmount,
+        goalCurrentAmount: currentAmount,
+        progressPercentage: Math.round(((currentAmount + values.amount) / contributingGoal.targetAmount) * 100),
+      });
       setContributingGoal(null);
       toast.success("Contribution added");
     } catch {
@@ -78,6 +100,9 @@ export function GoalsPage() {
     if (!deletingGoal) return;
     try {
       await removeGoal(deletingGoal.id);
+      pendo.track("goal_deleted", {
+        goalName: deletingGoal.name,
+      });
       setDeletingGoal(null);
       toast.success("Goal deleted");
     } catch {

@@ -81,6 +81,16 @@ export function useQuickAdd(workspaceId: string, open: boolean): UseQuickAddRetu
       };
       await createTransaction(tx);
       await notifyBudgetThreshold(workspaceId, tx, transactions, categories);
+      pendo.track("quick_add_transaction_saved", {
+        amount: tx.amount,
+        transactionType: type,
+        categoryId: effectiveCategory.id,
+        categoryGuessed: !overrideCategory,
+        dateExplicit: parsed.date !== new Date().toISOString().slice(0, 10),
+        typeExplicit: Boolean(overrideCategory),
+        hasDescription: Boolean(parsed.description),
+        inputLength: input.length,
+      });
       // Keep local history fresh so the next entry's inference sees this one.
       setTransactions((prev) => [tx, ...prev]);
       setInput("");

@@ -35,6 +35,12 @@ function BudgetRowForm({ category, currentLimit, currency, locale, onSave, onCle
     setIsSaving(true);
     try {
       await onSave(category.id, parsed);
+      pendo.track("budget_set", {
+        categoryId: category.id,
+        categoryName: category.name,
+        monthlyLimit: parsed,
+        isNewBudget: currentLimit === null,
+      });
       toast.success(`Budget set for ${category.name}`);
     } catch {
       toast.error("Failed to save budget");
@@ -48,6 +54,11 @@ function BudgetRowForm({ category, currentLimit, currency, locale, onSave, onCle
     setIsSaving(true);
     try {
       await onClear();
+      pendo.track("budget_cleared", {
+        categoryId: category.id,
+        categoryName: category.name,
+        previousLimit: currentLimit,
+      });
       setValue("");
       toast.success(`Budget cleared for ${category.name}`);
     } catch {
