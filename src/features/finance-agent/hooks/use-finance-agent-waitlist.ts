@@ -32,6 +32,10 @@ export function useFinanceAgentWaitlist() {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newEntry));
     setEntry(newEntry);
+    pendo.track("finance_agent_waitlist_joined", {
+      position: newEntry.position,
+      joinedAt: newEntry.joinedAt,
+    });
   }, []);
 
   return { entry, joined: entry !== null, join };

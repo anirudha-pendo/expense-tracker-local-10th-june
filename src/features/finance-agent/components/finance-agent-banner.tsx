@@ -35,6 +35,7 @@ export function FinanceAgentBanner() {
           size="sm"
           onClick={() => setModalOpen(true)}
           className="font-mono text-[10px] uppercase tracking-widest shrink-0"
+          data-testid="finance-agent-banner-cta"
         >
           {joined ? (
             <span className="flex items-center gap-1.5">
