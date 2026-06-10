@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useAuthContext } from "@/features/auth/hooks/auth-context";
 import { SignInPage } from "@/features/auth/pages/sign-in-page";
 import { SignUpPage } from "@/features/auth/pages/sign-up-page";
@@ -10,6 +10,8 @@ import { InsightsPage } from "@/features/insights/pages/insights-page";
 import { SettingsPage } from "@/features/settings/pages/settings-page";
 import { ProtectedRoute } from "@/shared/components/protected-route";
 import { BotPage } from "@/features/bot/pages/bot-page";
+import { ProductWikiPage } from "@/features/info/pages/product-wiki-page";
+import { FaqFab } from "@/features/info/components/faq-fab";
 
 function GuestGuard({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, hasWorkspace, isLoading } = useAuthContext();
@@ -30,9 +32,13 @@ function WorkspaceGuard({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-export function AppRouter() {
+function RouterContent() {
+  const location = useLocation();
+  const isProductWikiPage = location.pathname === "/product-wiki";
+
   return (
-    <BrowserRouter>
+    <>
+      {!isProductWikiPage && <FaqFab />}
       <Routes>
         <Route
           path="/sign-in"
@@ -99,8 +105,17 @@ export function AppRouter() {
           }
         />
         <Route path="/bot" element={<BotPage />} />
+        <Route path="/product-wiki" element={<ProductWikiPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+    </>
+  );
+}
+
+export function AppRouter() {
+  return (
+    <BrowserRouter>
+      <RouterContent />
     </BrowserRouter>
   );
 }
