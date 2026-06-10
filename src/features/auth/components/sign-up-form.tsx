@@ -5,7 +5,9 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { signUpSchema, type SignUpFormValues } from "../schemas/auth.schema";
+import { TermsOfConditionsDialog } from "./terms-of-conditions-dialog";
 
 interface SignUpFormProps {
   onSubmit: (values: SignUpFormValues) => Promise<void>;
@@ -13,6 +15,7 @@ interface SignUpFormProps {
 
 export function SignUpForm({ onSubmit }: SignUpFormProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const [termsDialogOpen, setTermsDialogOpen] = useState(false);
 
   const {
     register,
@@ -23,7 +26,8 @@ export function SignUpForm({ onSubmit }: SignUpFormProps) {
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
         <Label htmlFor="displayName">Display Name</Label>
         <Input
@@ -93,10 +97,43 @@ export function SignUpForm({ onSubmit }: SignUpFormProps) {
         )}
       </div>
 
+      <div className="flex items-center gap-2">
+        <Checkbox
+          id="acceptedTerms"
+          aria-invalid={!!errors.acceptedTerms}
+          {...register("acceptedTerms")}
+        />
+        <Label htmlFor="acceptedTerms" className="text-sm font-normal cursor-pointer flex items-center gap-1">
+          I accept the{" "}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setTermsDialogOpen(true);
+            }}
+            className="underline underline-offset-2 hover:no-underline transition-all"
+          >
+            Terms of Conditions
+          </button>
+        </Label>
+      </div>
+      {errors.acceptedTerms && (
+        <p className="text-sm text-destructive">{errors.acceptedTerms.message}</p>
+      )}
+
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting && <Loader2 data-icon="inline-start" className="animate-spin" />}
         Create account
       </Button>
     </form>
+
+    <TermsOfConditionsDialog
+      open={termsDialogOpen}
+      onOpenChange={setTermsDialogOpen}
+      onAccept={() => {
+        setTermsDialogOpen(false);
+      }}
+    />
+    </>
   );
 }

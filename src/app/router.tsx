@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useAuthContext } from "@/features/auth/hooks/auth-context";
 import { SignInPage } from "@/features/auth/pages/sign-in-page";
 import { SignUpPage } from "@/features/auth/pages/sign-up-page";
+import { TermsOfConditionsPage } from "@/features/auth/pages/terms-of-conditions-page";
 import { WorkspaceSetupPage } from "@/features/workspace/pages/workspace-setup-page";
 import { DashboardPage } from "@/features/dashboard/pages/dashboard-page";
 import { TransactionsPage } from "@/features/transactions/pages/transactions-page";
@@ -49,6 +50,10 @@ export function AppRouter() {
               <SignUpPage />
             </GuestGuard>
           }
+        />
+        <Route
+          path="/terms-of-conditions"
+          element={<TermsOfConditionsPage />}
         />
         <Route
           path="/setup-workspace"
