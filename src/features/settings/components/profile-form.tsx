@@ -40,6 +40,9 @@ export function ProfileForm() {
 
       await updateUser({ ...user, displayName: values.displayName, avatarInitials: initials });
       await refreshUser();
+      pendo.track("profile_updated", {
+        displayNameChanged: values.displayName !== user.displayName,
+      });
       toast.success("Profile updated");
     } catch {
       toast.error("Failed to update profile");

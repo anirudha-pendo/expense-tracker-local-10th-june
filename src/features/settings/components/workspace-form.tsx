@@ -65,6 +65,13 @@ export function WorkspaceForm() {
       const updated: Workspace = { ...workspace, ...values };
       await updateWorkspace(updated);
       setActiveWorkspace(updated);
+      pendo.track("workspace_settings_updated", {
+        workspaceName: values.name,
+        currency: values.currency,
+        locale: values.locale,
+        currencyChanged: values.currency !== workspace.currency,
+        localeChanged: values.locale !== workspace.locale,
+      });
       toast.success("Workspace settings saved");
     } catch {
       toast.error("Failed to save workspace settings");

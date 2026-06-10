@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { AppLayout } from "@/shared/components/app-layout";
@@ -68,10 +68,46 @@ export function TransactionsPage() {
     });
   }, [transactions, filters]);
 
+  // Debounced tracking of search/filter usage
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => {
+    const hasActiveFilters = filters.search || filters.type !== "all" || filters.categoryId || filters.month;
+    if (!hasActiveFilters) return;
+
+    clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(() => {
+      const activeFilterCount = [
+        filters.search ? 1 : 0,
+        filters.type !== "all" ? 1 : 0,
+        filters.categoryId ? 1 : 0,
+        filters.month ? 1 : 0,
+      ].reduce((a, b) => a + b, 0);
+
+      pendo.track("transaction_search_executed", {
+        hasSearchQuery: Boolean(filters.search),
+        typeFilter: filters.type,
+        categoryFilter: filters.categoryId || "none",
+        monthFilter: filters.month || "none",
+        activeFilterCount,
+        resultsCount: filteredTransactions.length,
+      });
+    }, 800);
+
+    return () => clearTimeout(searchDebounceRef.current);
+  }, [filters, filteredTransactions.length]);
+
   async function handleAdd(values: TransactionFormValues) {
     try {
       const created = await addTransaction({ ...values, workspaceId: workspace!.id, notes: values.notes ?? "" });
       await addAttachments.flushStaged(created.id);
+      pendo.track("transaction_added", {
+        transactionType: values.type,
+        amount: values.amount,
+        categoryId: values.categoryId,
+        hasAttachments: addAttachments.attachments.length > 0,
+        isRecurring: values.isRecurring,
+        hasNotes: Boolean(values.notes),
+      });
       setShowForm(false);
       toast.success("Transaction added");
     } catch {
@@ -89,6 +125,13 @@ export function TransactionsPage() {
         date: values.date,
       };
       await editTransaction(updated);
+      pendo.track("transaction_edited", {
+        transactionType: values.type,
+        amount: values.amount,
+        categoryId: values.categoryId,
+        isRecurring: values.isRecurring,
+        hasNotes: Boolean(values.notes),
+      });
       setEditingTx(null);
       await refreshAttachmentCounts();
       toast.success("Transaction updated");
@@ -101,6 +144,11 @@ export function TransactionsPage() {
     if (!deletingTx) return;
     try {
       await removeTransaction(deletingTx.id);
+      pendo.track("transaction_deleted", {
+        transactionType: deletingTx.type,
+        amount: deletingTx.amount,
+        categoryId: deletingTx.categoryId,
+      });
       setDeletingTx(null);
       toast.success("Transaction deleted");
     } catch {

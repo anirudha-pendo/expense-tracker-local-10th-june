@@ -28,8 +28,16 @@ export function DataExportImport() {
       ]);
       // Receipt attachments (binary blobs) are intentionally not included.
       const data = { workspace, transactions, categories, goals, budgets, exportedAt: new Date().toISOString() };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const jsonStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
       downloadBlob(blob, `expense-tracker-export-${new Date().toISOString().slice(0, 10)}.json`);
+      pendo.track("data_exported_json", {
+        transactionCount: transactions.length,
+        categoryCount: categories.length,
+        goalCount: goals.length,
+        budgetCount: budgets.length,
+        fileSizeBytes: jsonStr.length,
+      });
       toast.success("Exported successfully");
     } catch {
       toast.error("Export failed");
@@ -61,6 +69,10 @@ export function DataExportImport() {
       const csv = [header.join(","), ...rows.map((r) => r.join(","))].join("\n");
       const blob = new Blob([csv], { type: "text/csv" });
       downloadBlob(blob, `transactions-${new Date().toISOString().slice(0, 10)}.csv`);
+      pendo.track("data_exported_csv", {
+        transactionCount: transactions.length,
+        fileSizeBytes: csv.length,
+      });
       toast.success("CSV exported successfully");
     } catch {
       toast.error("CSV export failed");
@@ -117,6 +129,15 @@ export function DataExportImport() {
         }
       }
 
+      const importedGoalCount = Array.isArray(data.goals) ? data.goals.length : 0;
+      const importedBudgetCount = Array.isArray(data.budgets) ? data.budgets.length : 0;
+      pendo.track("data_imported", {
+        importedTransactionCount: imported,
+        importedGoalCount,
+        importedBudgetCount,
+        fileType: file.name.split(".").pop() || "unknown",
+        fileName: file.name,
+      });
       toast.success(
         `Imported ${imported} transaction${imported !== 1 ? "s" : ""}${
           extras > 0 ? ` and ${extras} goal${extras !== 1 ? "s" : ""}/budget${extras !== 1 ? "s" : ""}` : ""
