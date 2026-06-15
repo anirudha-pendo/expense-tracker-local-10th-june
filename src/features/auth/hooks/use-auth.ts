@@ -44,10 +44,27 @@ export function useAuth(): AuthState & AuthActions {
       }
       setUser(storedUser);
 
+      let storedWorkspace: Workspace | undefined;
       if (session.workspaceId) {
-        const storedWorkspace = await db.get("workspaces", session.workspaceId);
+        storedWorkspace = await db.get("workspaces", session.workspaceId);
         if (storedWorkspace) setWorkspace(storedWorkspace);
       }
+
+      pendo.identify({
+        visitor: {
+          id: storedUser.id,
+          username: storedUser.username,
+          displayName: storedUser.displayName,
+          avatarInitials: storedUser.avatarInitials,
+          createdAt: storedUser.createdAt,
+          workspaceCurrency: storedWorkspace?.currency ?? '',
+          workspaceLocale: storedWorkspace?.locale ?? '',
+        },
+        account: {
+          id: storedWorkspace?.id ?? storedUser.id,
+          name: storedWorkspace?.name ?? '',
+        },
+      });
     } catch {
       clearSession();
     } finally {
@@ -96,6 +113,9 @@ export function useAuth(): AuthState & AuthActions {
         workspaceCurrency: '',
         workspaceLocale: '',
       },
+      account: {
+        id: newUser.id,
+      },
     });
   }, []);
 
@@ -126,6 +146,10 @@ export function useAuth(): AuthState & AuthActions {
         createdAt: storedUser.createdAt,
         workspaceCurrency: activeWorkspace?.currency ?? '',
         workspaceLocale: activeWorkspace?.locale ?? '',
+      },
+      account: {
+        id: activeWorkspace?.id ?? storedUser.id,
+        name: activeWorkspace?.name ?? '',
       },
     });
   }, []);

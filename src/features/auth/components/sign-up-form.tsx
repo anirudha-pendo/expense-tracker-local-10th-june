@@ -121,7 +121,7 @@ export function SignUpForm({ onSubmit }: SignUpFormProps) {
         <p className="text-sm text-destructive">{errors.acceptedTerms.message}</p>
       )}
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
+      <Button id="sign-up-submit" type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting && <Loader2 data-icon="inline-start" className="animate-spin" />}
         Create account
       </Button>

@@ -64,7 +64,7 @@ export function SignInForm({ onSubmit }: SignInFormProps) {
         )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
+      <Button id="sign-in-submit" type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting && <Loader2 data-icon="inline-start" className="animate-spin" />}
         Sign in
       </Button>

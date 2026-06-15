@@ -3,11 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
-pendo.initialize({
-  visitor: {
-    id: ''
-  }
-});
+pendo.initialize();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
