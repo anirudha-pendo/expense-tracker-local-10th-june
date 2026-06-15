@@ -9,6 +9,7 @@ import { HealthScoreCard } from "../components/health-score-card";
 import { AnomalyList } from "../components/anomaly-list";
 import { MomDeltaTable } from "../components/mom-delta-table";
 import { LargestExpenses } from "../components/largest-expenses";
+import { SpendingHeatmap } from "../components/spending-heatmap";
 
 export function InsightsPage() {
   const { workspace } = useAuthContext();
@@ -51,6 +52,11 @@ export function InsightsPage() {
   return (
     <AppLayout title="Insights">
       <div className="flex flex-col gap-6">
+        <SpendingHeatmap
+          transactions={insights.transactions}
+          currency={currency}
+          locale={locale}
+        />
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <ForecastCard forecast={insights.forecast} currency={currency} locale={locale} />
           <HealthScoreCard health={insights.health} />

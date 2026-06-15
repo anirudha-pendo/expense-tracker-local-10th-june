@@ -23,6 +23,7 @@ export interface Insights {
   largest: Transaction[];
   health: HealthScore;
   categories: Category[];
+  transactions: Transaction[];
   hasTransactions: boolean;
   isLoading: boolean;
 }
@@ -64,6 +65,7 @@ export function useInsights(workspaceId: string): Insights {
       largest: largestExpenses(transactions, now),
       health: computeHealthScore(transactions, budgets, now),
       categories,
+      transactions,
       hasTransactions: transactions.length > 0,
       isLoading,
     };
