@@ -100,7 +100,7 @@ export function WorkspaceSetupForm({ onSubmit }: WorkspaceSetupFormProps) {
         {errors.locale && <p className="text-sm text-destructive">{errors.locale.message}</p>}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
+      <Button id="create-workspace-submit" type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting && <Loader2 data-icon="inline-start" className="animate-spin" />}
         Create Workspace
       </Button>
