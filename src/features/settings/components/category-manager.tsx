@@ -177,6 +177,12 @@ export function CategoryManager() {
     try {
       await updateCategory({ ...editingCat, ...values });
       await reload();
+      pendo.track("category_updated", {
+        categoryName: values.name,
+        scope: values.scope,
+        color: values.color,
+        isDefault: editingCat.isDefault,
+      });
       setEditingCat(null);
       toast.success("Category updated");
     } catch {
