@@ -131,6 +131,10 @@ export function useAuth(): AuthState & AuthActions {
   }, []);
 
   const signOut = useCallback(() => {
+    const session = getSession();
+    pendo.track("user_signed_out", {
+      userId: session?.userId ?? "unknown",
+    });
     pendo.clearSession();
     clearSession();
     setUser(null);
