@@ -69,7 +69,7 @@ export function TransactionsPage() {
   }, [transactions, filters]);
 
   // Debounced tracking of search/filter usage
-  const searchDebounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => {
     const hasActiveFilters = filters.search || filters.type !== "all" || filters.categoryId || filters.month;
     if (!hasActiveFilters) return;
