@@ -57,7 +57,7 @@ export function useAttachments(workspaceId: string, transactionId: string | null
   }, [transactionId]);
 
   useEffect(() => {
-    reload();
+    reload(); // eslint-disable-line react-hooks/set-state-in-effect
   }, [reload]);
 
   const totalCount = attachments.length + stagedFiles.length;
@@ -72,6 +72,7 @@ export function useAttachments(workspaceId: string, transactionId: string | null
           continue;
         }
         count++;
+        const isStaged = !transactionId;
         if (transactionId) {
           await createAttachment({
             id: crypto.randomUUID(),
@@ -86,6 +87,13 @@ export function useAttachments(workspaceId: string, transactionId: string | null
         } else {
           setStagedFiles((prev) => [...prev, { id: crypto.randomUUID(), file }]);
         }
+        pendo.track("attachment_uploaded", {
+          fileName: file.name,
+          fileType: file.type,
+          fileSizeBytes: file.size,
+          attachmentCount: count,
+          isStaged,
+        });
       }
       if (transactionId) await reload();
     },

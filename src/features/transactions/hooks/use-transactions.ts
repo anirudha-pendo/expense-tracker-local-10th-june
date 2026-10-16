@@ -24,6 +24,14 @@ export async function notifyBudgetThreshold(
   if (!alert) return;
   const categoryName = categories.find((c) => c.id === alert.categoryId)?.name ?? "Category";
   const percent = Math.round((alert.spent / alert.monthlyLimit) * 100);
+  pendo.track("budget_threshold_crossed", {
+    categoryId: alert.categoryId,
+    categoryName,
+    thresholdLevel: alert.level,
+    spentAmount: alert.spent,
+    monthlyLimit: alert.monthlyLimit,
+    percentUsed: percent,
+  });
   if (alert.level === "over") {
     toast.error(`Budget exceeded: ${categoryName} is at ${percent}% of its monthly limit`);
   } else {
@@ -66,7 +74,7 @@ export function useTransactions(workspaceId: string): UseTransactionsReturn {
   }, [workspaceId]);
 
   useEffect(() => {
-    reload();
+    reload(); // eslint-disable-line react-hooks/set-state-in-effect
   }, [reload]);
 
   useDataChanged(reload);
