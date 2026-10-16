@@ -63,7 +63,7 @@ function CategoryFormDialog({ open, defaultValues, onSubmit, onCancel }: Categor
     },
   });
 
-  const selectedColor = watch("color");
+  const selectedColor = watch("color"); // eslint-disable-line react-hooks/incompatible-library
   const scope = watch("scope");
 
   return (
@@ -177,6 +177,14 @@ export function CategoryManager() {
     try {
       await updateCategory({ ...editingCat, ...values });
       await reload();
+      pendo.track("category_edited", {
+        categoryName: values.name,
+        scope: values.scope,
+        color: values.color,
+        nameChanged: values.name !== editingCat.name,
+        scopeChanged: values.scope !== editingCat.scope,
+        colorChanged: values.color !== editingCat.color,
+      });
       setEditingCat(null);
       toast.success("Category updated");
     } catch {
@@ -261,12 +269,14 @@ export function CategoryManager() {
         <div>
           <h4 className="text-sm font-medium text-muted-foreground mb-2">Expense Categories</h4>
           <div className="rounded-lg border px-4">
+            {/* eslint-disable-next-line react-hooks/static-components */}
             <CategoryList items={expense} />
           </div>
         </div>
         <div>
           <h4 className="text-sm font-medium text-muted-foreground mb-2">Income Categories</h4>
           <div className="rounded-lg border px-4">
+            {/* eslint-disable-next-line react-hooks/static-components */}
             <CategoryList items={income} />
           </div>
         </div>

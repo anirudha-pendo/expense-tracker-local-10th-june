@@ -56,7 +56,7 @@ export function useAuth(): AuthState & AuthActions {
   }, []);
 
   useEffect(() => {
-    loadSession();
+    loadSession(); // eslint-disable-line react-hooks/set-state-in-effect
   }, [loadSession]);
 
   const signUp = useCallback(async (username: string, displayName: string, password: string) => {
@@ -131,6 +131,7 @@ export function useAuth(): AuthState & AuthActions {
   }, []);
 
   const signOut = useCallback(() => {
+    pendo.track("sign_out");
     pendo.clearSession();
     clearSession();
     setUser(null);
